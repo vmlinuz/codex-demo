@@ -1,16 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Source_Sans_3 } from "next/font/google";
 import "./globals.css";
-
-const display = Playfair_Display({
-  variable: "--font-display",
-  subsets: ["latin"],
-});
-
-const sans = Source_Sans_3({
-  variable: "--font-sans",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "TinyNotes",
@@ -24,7 +13,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${display.variable} ${sans.variable} antialiased`}>{children}</body>
+      <body className="antialiased">{children}</body>
     </html>
   );
 }

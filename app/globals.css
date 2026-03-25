@@ -1,23 +1,35 @@
 @import "tailwindcss";
 
 :root {
-  --background: #eff8f5;
+  --font-sans: "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-display: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  --background: #eef8f6;
+  --background-strong: #dbeee9;
   --foreground: #14232a;
-  --surface: rgba(255, 255, 255, 0.78);
+  --surface: rgba(255, 255, 255, 0.82);
   --surface-strong: #ffffff;
+  --surface-soft: rgba(255, 255, 255, 0.64);
   --accent: #149c8a;
   --accent-strong: #0f766e;
+  --accent-soft: #cdeee7;
   --muted: #5f7480;
+  --line: rgba(20, 35, 42, 0.1);
+  --shadow: rgba(15, 23, 42, 0.08);
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-background-strong: var(--background-strong);
   --color-foreground: var(--foreground);
   --color-surface: var(--surface);
   --color-surface-strong: var(--surface-strong);
+  --color-surface-soft: var(--surface-soft);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
   --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-shadow: var(--shadow);
   --font-sans: var(--font-sans);
   --font-display: var(--font-display);
 }
@@ -31,9 +43,23 @@ html {
 }
 
 body {
+  margin: 0;
+  min-height: 100vh;
   background: var(--background);
+  background-image:
+    radial-gradient(circle at top, rgba(20, 156, 138, 0.2), transparent 28%),
+    linear-gradient(180deg, #f5fcfa 0%, #eef8f6 45%, #e2f1ee 100%);
   color: var(--foreground);
   font-family: var(--font-sans), sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+::selection {
+  background: rgba(20, 156, 138, 0.2);
 }
 
 code {
