@@ -11,10 +11,7 @@ type StatusBadgeProps = {
   tone?: keyof typeof toneClasses;
 };
 
-export function StatusBadge({
-  children,
-  tone = "accent",
-}: Readonly<StatusBadgeProps>) {
+export function StatusBadge({ children, tone = "accent" }: Readonly<StatusBadgeProps>) {
   return (
     <span
       className={`inline-flex items-center rounded-full border px-3 py-1 text-[0.72rem] font-semibold uppercase tracking-[0.22em] ${toneClasses[tone]}`}

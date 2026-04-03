@@ -1,13 +1,14 @@
 import Link from "next/link";
 
+import { PublicPageShell } from "@/components/layout/public-page-shell";
 import { Panel } from "@/components/ui/panel";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 export function NotFoundPlaceholder() {
   return (
-    <main className="min-h-screen px-6 py-8 text-foreground">
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-3xl items-center justify-center">
+    <PublicPageShell className="flex min-h-[calc(100vh-11rem)] max-w-3xl items-center justify-center">
+      <div className="w-full">
         <Panel className="w-full space-y-8 p-8 text-center sm:p-10">
           <div className="flex justify-center">
             <StatusBadge tone="strong">404</StatusBadge>
@@ -37,6 +38,6 @@ export function NotFoundPlaceholder() {
           </div>
         </Panel>
       </div>
-    </main>
+    </PublicPageShell>
   );
 }

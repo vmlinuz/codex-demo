@@ -16,20 +16,16 @@ export function NotesShell({
   children: ReactNode;
 }>) {
   return (
-    <main className="min-h-screen px-6 py-8 text-foreground">
+    <main className="px-6 py-8 text-foreground">
       <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
         <Panel className="flex h-full flex-col gap-8 p-6">
           <div className="space-y-4">
-            <div className="flex items-center justify-between gap-3">
-              <Link className="text-sm font-semibold uppercase tracking-[0.3em] text-accent-strong" href="/notes">
-                TinyNotes
-              </Link>
-              <StatusBadge tone="muted">Auth shell</StatusBadge>
-            </div>
+            <StatusBadge tone="muted">Private workspace</StatusBadge>
             <div className="space-y-2">
               <h1 className="font-display text-3xl text-foreground">Notes workspace</h1>
               <p className="text-sm leading-7 text-muted">
-                Placeholder navigation and page framing for the authenticated routes.
+                Navigation, note creation, and sharing controls live here once the authenticated
+                experience is wired in.
               </p>
             </div>
           </div>
@@ -61,7 +57,7 @@ export function NotesShell({
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent-strong">
                 Authenticated routes
               </p>
-              <h2 className="mt-2 font-display text-3xl text-foreground">Notes route skeleton</h2>
+              <h2 className="mt-2 font-display text-3xl text-foreground">Your notes</h2>
             </div>
             <div className="flex flex-wrap gap-3">
               <StatusBadge>Server component reads later</StatusBadge>

@@ -2,9 +2,7 @@ type PlaceholderLinesProps = {
   lines?: number;
 };
 
-export function PlaceholderLines({
-  lines = 3,
-}: Readonly<PlaceholderLinesProps>) {
+export function PlaceholderLines({ lines = 3 }: Readonly<PlaceholderLinesProps>) {
   return (
     <div className="space-y-3">
       {Array.from({ length: lines }).map((_, index) => (

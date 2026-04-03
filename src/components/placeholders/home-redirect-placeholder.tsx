@@ -15,16 +15,22 @@ export function HomeRedirectPlaceholder() {
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-[1.35rem] border border-line bg-white/70 p-5">
           <StatusBadge>Authenticated</StatusBadge>
-          <p className="mt-4 text-lg font-semibold text-foreground">Eventually redirects to `/notes`</p>
+          <p className="mt-4 text-lg font-semibold text-foreground">
+            Eventually redirects to `/notes`
+          </p>
           <p className="mt-2 text-sm leading-7 text-muted">
-            The notes dashboard is already scaffolded and ready for real session-aware routing later.
+            The notes dashboard is already scaffolded and ready for real session-aware routing
+            later.
           </p>
         </div>
         <div className="rounded-[1.35rem] border border-line bg-white/70 p-5">
           <StatusBadge tone="muted">Unauthenticated</StatusBadge>
-          <p className="mt-4 text-lg font-semibold text-foreground">Eventually redirects to `/login`</p>
+          <p className="mt-4 text-lg font-semibold text-foreground">
+            Eventually redirects to `/login`
+          </p>
           <p className="mt-2 text-sm leading-7 text-muted">
-            The auth entry pages are present, but the credential flow is intentionally not wired yet.
+            The auth entry pages are present, but the credential flow is intentionally not wired
+            yet.
           </p>
         </div>
       </div>
