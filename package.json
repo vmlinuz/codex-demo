@@ -6,6 +6,7 @@
     "dev": "bun run --bun next dev",
     "build": "bun run --bun next build",
     "start": "bun run --bun next start",
+    "migrate": "bun run scripts/migrate.ts",
     "lint": "oxlint",
     "format": "oxfmt"
   },
@@ -19,6 +20,7 @@
     "@types/node": "^25.2.3",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "bun-types": "^1.3.11",
     "eslint": "^10.0.0",
     "eslint-config-next": "16.1.6",
     "oxfmt": "^0.33.0",
