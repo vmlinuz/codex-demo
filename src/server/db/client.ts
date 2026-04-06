@@ -14,7 +14,15 @@ const globalForDatabase = globalThis as DatabaseCache;
 export function createSqliteDatabase(filename: string) {
   mkdirSync(dirname(filename), { recursive: true });
 
-  return new Database(filename, { create: true });
+  const database = new Database(filename, {
+    create: true,
+    strict: true,
+  });
+
+  // SQLite keeps foreign-key enforcement disabled by default.
+  database.exec("PRAGMA foreign_keys = ON;");
+
+  return database;
 }
 
 export function getDb() {
