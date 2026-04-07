@@ -7,7 +7,7 @@ import {
   ghostPillButtonClassName,
   surfacePillButtonClassName,
 } from "@/components/ui/tailwind-recipes";
-import { hasAuthSessionCookie } from "@/server/auth";
+import { getAuthSession } from "@/server/auth";
 
 import "./globals.css";
 
@@ -22,7 +22,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const isAuthenticated = await hasAuthSessionCookie();
+  // `next build` prerenders `/_not-found` under Node, but auth depends on Bun's SQLite runtime.
+  const session = process.versions.bun ? await getAuthSession() : null;
+  const isAuthenticated = Boolean(session?.user);
 
   return (
     <html lang="en">

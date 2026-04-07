@@ -6,7 +6,7 @@ export default function SharedNoteLoading() {
     <PublicPageShell className="max-w-5xl">
       <LoadingStatePlaceholder
         caption="Public route"
-        description="The token route is in place. Token validation, note lookup, and sanitization will be implemented later."
+        description="The public route now validates share tokens and note existence on the server. Sanitized HTML rendering is still pending."
         title="Loading shared note"
       />
     </PublicPageShell>

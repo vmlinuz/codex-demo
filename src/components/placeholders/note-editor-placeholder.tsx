@@ -16,6 +16,7 @@ type NoteEditorPlaceholderProps = {
   createdAtLabel: string;
   updatedAtLabel: string;
   noteId?: string;
+  shareStatusLabel?: string;
 };
 
 export function NoteEditorPlaceholder({
@@ -25,6 +26,7 @@ export function NoteEditorPlaceholder({
   createdAtLabel,
   updatedAtLabel,
   noteId,
+  shareStatusLabel,
 }: Readonly<NoteEditorPlaceholderProps>) {
   const isExisting = mode === "existing";
 
@@ -45,9 +47,13 @@ export function NoteEditorPlaceholder({
         <div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="space-y-5">
             <div className={subtleCardClassName}>
-              <p className="text-sm font-medium text-foreground">Title field placeholder</p>
+              <p className="text-sm font-medium text-foreground">
+                {isExisting ? "Loaded note title" : "Title field placeholder"}
+              </p>
               <p className="mt-2 text-sm leading-7 text-muted">
-                A simple title input will live here once note creation and updates are implemented.
+                {isExisting
+                  ? `Current stored title: ${title}.`
+                  : "A simple title input will live here once note creation and updates are implemented."}
               </p>
             </div>
             <div className={subtleCardClassName}>
@@ -87,8 +93,9 @@ export function NoteEditorPlaceholder({
                 Enable and disable share actions will appear here once the sharing flow exists.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <StatusBadge tone="muted">share_enabled: placeholder</StatusBadge>
-                <StatusBadge tone="muted">token: placeholder</StatusBadge>
+                <StatusBadge tone="muted">
+                  {shareStatusLabel ?? "share_enabled: placeholder"}
+                </StatusBadge>
               </div>
             </div>
             <div className={subtleCardClassName}>
@@ -120,7 +127,7 @@ export function NoteEditorPlaceholder({
         <div className="space-y-3 text-sm leading-7 text-muted">
           <p>No client-side fetch for initial note data.</p>
           <p>Server Actions handle create, update, delete, and share toggles.</p>
-          <p>Payload validation, ownership checks, and error contracts are still pending.</p>
+          <p>Payload validation, editor mutations, and error contracts are still pending.</p>
         </div>
       </Panel>
     </div>
