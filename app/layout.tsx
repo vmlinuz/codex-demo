@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { SignOutButton } from "@/components/auth/sign-out-button";
+import { hasAuthSessionCookie } from "@/server/auth";
+
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -9,11 +12,13 @@ export const metadata: Metadata = {
     "Private notes with secure sharing, built around React Server Components and Server Actions.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const isAuthenticated = await hasAuthSessionCookie();
+
   return (
     <html lang="en">
       <body className="antialiased">
@@ -27,18 +32,32 @@ export default function RootLayout({
                 TinyNotes
               </Link>
               <nav className="flex items-center gap-2">
-                <Link
-                  className="rounded-full border border-transparent px-4 py-2 text-sm font-medium text-muted transition hover:border-accent/15 hover:bg-white/70 hover:text-foreground"
-                  href="/login"
-                >
-                  Login
-                </Link>
-                <Link
-                  className="rounded-full border border-accent/20 bg-white/80 px-4 py-2 text-sm font-medium text-foreground shadow-[0_12px_30px_var(--shadow)] transition hover:border-accent/35 hover:bg-white"
-                  href="/register"
-                >
-                  Register
-                </Link>
+                {isAuthenticated ? (
+                  <>
+                    <Link
+                      className="rounded-full border border-accent/20 bg-white/80 px-4 py-2 text-sm font-medium text-foreground shadow-[0_12px_30px_var(--shadow)] transition hover:border-accent/35 hover:bg-white"
+                      href="/notes"
+                    >
+                      Notes
+                    </Link>
+                    <SignOutButton variant="header" />
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      className="rounded-full border border-transparent px-4 py-2 text-sm font-medium text-muted transition hover:border-accent/15 hover:bg-white/70 hover:text-foreground"
+                      href="/login"
+                    >
+                      Login
+                    </Link>
+                    <Link
+                      className="rounded-full border border-accent/20 bg-white/80 px-4 py-2 text-sm font-medium text-foreground shadow-[0_12px_30px_var(--shadow)] transition hover:border-accent/35 hover:bg-white"
+                      href="/register"
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
               </nav>
             </div>
           </header>

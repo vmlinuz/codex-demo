@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { betterAuth } from "better-auth";
+import { getSessionCookie } from "better-auth/cookies";
 import { nextCookies } from "better-auth/next-js";
 
 import { getDb } from "@/server/db/client";
@@ -47,6 +48,10 @@ export async function getAuthSession() {
   return getAuth().api.getSession({
     headers: await headers(),
   });
+}
+
+export async function hasAuthSessionCookie() {
+  return Boolean(getSessionCookie(await headers()));
 }
 
 export async function requireAuthSession() {
