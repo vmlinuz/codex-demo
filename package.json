@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "bun --bun next dev --webpack",
     "build": "next build",
-    "start": "next start",
+    "start": "bun --bun next start",
     "migrate": "bun run scripts/migrate.ts",
     "lint": "oxlint",
     "format": "oxfmt"
