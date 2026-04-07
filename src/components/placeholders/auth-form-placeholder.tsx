@@ -4,6 +4,7 @@ import { Panel } from "@/components/ui/panel";
 import { PlaceholderLines } from "@/components/ui/placeholder-lines";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { accentCalloutClassName, splitMetaRowClassName } from "@/components/ui/tailwind-recipes";
 
 type AuthFormPlaceholderProps = {
   title: string;
@@ -38,7 +39,7 @@ export function AuthFormPlaceholder({
           </div>
         ))}
       </div>
-      <div className="rounded-[1.35rem] border border-accent/15 bg-accent/10 p-5">
+      <div className={accentCalloutClassName}>
         <p className="text-sm font-semibold text-foreground">{submitLabel}</p>
         <p className="mt-2 text-sm leading-7 text-muted">
           Server-side validation, generic error messages, and session creation will be added later.
@@ -47,7 +48,7 @@ export function AuthFormPlaceholder({
           <PlaceholderLines lines={3} />
         </div>
       </div>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-sm text-muted">
+      <div className={splitMetaRowClassName}>
         <span>Credentials-only auth path reserved by spec.</span>
         <Link className="font-semibold text-accent-strong" href={companionHref}>
           {companionLabel}

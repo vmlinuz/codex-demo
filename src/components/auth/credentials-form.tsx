@@ -11,6 +11,11 @@ import { deriveDisplayNameFromEmail } from "@/auth/derive-display-name";
 import { Panel } from "@/components/ui/panel";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {
+  accentCalloutClassName,
+  errorMessageClassName,
+  splitMetaRowClassName,
+} from "@/components/ui/tailwind-recipes";
 
 type CredentialsFormProps = {
   companionHref: string;
@@ -120,7 +125,7 @@ export function CredentialsForm({
             htmlFor={`${mode}-password`}
           >
             <span>Password</span>
-            <span className="text-xs font-medium uppercase tracking-[0.18em] text-muted">
+            <span className="text-xs font-medium uppercase tracking-badge text-muted">
               Min 8 chars
             </span>
           </label>
@@ -136,16 +141,13 @@ export function CredentialsForm({
             type="password"
           />
         </div>
-        <div className="rounded-[1.35rem] border border-accent/15 bg-accent/10 p-5">
+        <div className={accentCalloutClassName}>
           <p className="text-sm font-semibold text-foreground">{submitLabel}</p>
           <p className="mt-2 text-sm leading-7 text-muted">
             Sessions are stored in secure cookies and credentials are handled through Better Auth.
           </p>
           {errorMessage ? (
-            <div
-              aria-live="polite"
-              className="mt-4 rounded-2xl border border-[rgba(191,76,91,0.18)] bg-[rgba(191,76,91,0.08)] px-4 py-3 text-sm text-foreground"
-            >
+            <div aria-live="polite" className={errorMessageClassName}>
               {errorMessage}
             </div>
           ) : (
@@ -160,7 +162,7 @@ export function CredentialsForm({
           {isSubmitting ? "Please wait..." : submitLabel}
         </button>
       </form>
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-5 text-sm text-muted">
+      <div className={splitMetaRowClassName}>
         <span>Credentials-only auth path, as required by the spec.</span>
         <Link className="font-semibold text-accent-strong" href={companionHref}>
           {companionLabel}

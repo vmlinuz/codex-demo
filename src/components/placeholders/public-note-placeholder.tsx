@@ -2,6 +2,7 @@ import { Panel } from "@/components/ui/panel";
 import { PlaceholderLines } from "@/components/ui/placeholder-lines";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { accentInsetClassName, surfaceInsetCardClassName } from "@/components/ui/tailwind-recipes";
 
 export function PublicNotePlaceholder({
   token,
@@ -17,23 +18,23 @@ export function PublicNotePlaceholder({
           eyebrow="GET /s/[token]"
           title="Shared note placeholder"
         />
-        <div className="rounded-[1.45rem] border border-line bg-white/75 p-6">
+        <div className="rounded-card-lg border border-line bg-white/75 p-6">
           <div className="space-y-4">
             <h2 className="font-display text-3xl text-foreground">Example public note title</h2>
             <p className="text-sm leading-7 text-muted">
               This content block stands in for the future sanitized TipTap HTML output.
             </p>
           </div>
-          <div className="mt-6 space-y-5 rounded-[1.2rem] border border-dashed border-accent/20 bg-accent/5 p-5">
+          <div className={`${accentInsetClassName} mt-6 space-y-5`}>
             <PlaceholderLines lines={4} />
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-white/80 bg-white/80 p-4">
+              <div className={surfaceInsetCardClassName}>
                 <p className="text-sm font-semibold text-foreground">Rendered prose</p>
                 <p className="mt-2 text-sm leading-7 text-muted">
                   Paragraphs, headings, lists, and links will be sanitized and rendered here.
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/80 bg-white/80 p-4">
+              <div className={surfaceInsetCardClassName}>
                 <p className="text-sm font-semibold text-foreground">Security boundary</p>
                 <p className="mt-2 text-sm leading-7 text-muted">
                   Invalid, disabled, or missing shares will later collapse to the same 404 path.

@@ -3,6 +3,11 @@ import Link from "next/link";
 import { Panel } from "@/components/ui/panel";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {
+  primaryPillButtonClassName,
+  secondaryPillButtonClassName,
+  subtleCardClassName,
+} from "@/components/ui/tailwind-recipes";
 
 export function HomeRedirectPlaceholder() {
   return (
@@ -13,7 +18,7 @@ export function HomeRedirectPlaceholder() {
         title="Future redirect staging page"
       />
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-[1.35rem] border border-line bg-white/70 p-5">
+        <div className={`${subtleCardClassName} bg-white/70`}>
           <StatusBadge>Authenticated</StatusBadge>
           <p className="mt-4 text-lg font-semibold text-foreground">
             Eventually redirects to `/notes`
@@ -23,7 +28,7 @@ export function HomeRedirectPlaceholder() {
             later.
           </p>
         </div>
-        <div className="rounded-[1.35rem] border border-line bg-white/70 p-5">
+        <div className={`${subtleCardClassName} bg-white/70`}>
           <StatusBadge tone="muted">Unauthenticated</StatusBadge>
           <p className="mt-4 text-lg font-semibold text-foreground">
             Eventually redirects to `/login`
@@ -35,16 +40,10 @@ export function HomeRedirectPlaceholder() {
         </div>
       </div>
       <div className="flex flex-wrap gap-3">
-        <Link
-          className="rounded-full border border-accent/20 bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:bg-accent-strong"
-          href="/login"
-        >
+        <Link className={primaryPillButtonClassName} href="/login">
           Visit login placeholder
         </Link>
-        <Link
-          className="rounded-full border border-line bg-white px-5 py-3 text-sm font-semibold text-foreground transition hover:border-accent/25"
-          href="/notes"
-        >
+        <Link className={secondaryPillButtonClassName} href="/notes">
           Visit notes shell
         </Link>
       </div>

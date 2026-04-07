@@ -2,6 +2,12 @@ import { Panel } from "@/components/ui/panel";
 import { PlaceholderLines } from "@/components/ui/placeholder-lines";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {
+  accentInsetClassName,
+  eyebrowClassName,
+  subtleCardClassName,
+  surfaceInsetCardClassName,
+} from "@/components/ui/tailwind-recipes";
 
 type NoteEditorPlaceholderProps = {
   mode: "new" | "existing";
@@ -38,27 +44,27 @@ export function NoteEditorPlaceholder({
         />
         <div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
           <div className="space-y-5">
-            <div className="rounded-[1.35rem] border border-line bg-white/75 p-5">
+            <div className={subtleCardClassName}>
               <p className="text-sm font-medium text-foreground">Title field placeholder</p>
               <p className="mt-2 text-sm leading-7 text-muted">
                 A simple title input will live here once note creation and updates are implemented.
               </p>
             </div>
-            <div className="rounded-[1.35rem] border border-line bg-white/75 p-5">
+            <div className={subtleCardClassName}>
               <div className="flex items-center justify-between gap-3">
                 <p className="text-sm font-medium text-foreground">Editor surface placeholder</p>
                 <StatusBadge tone="muted">TipTap later</StatusBadge>
               </div>
-              <div className="mt-4 rounded-[1.15rem] border border-dashed border-accent/20 bg-accent/5 p-5">
+              <div className={`${accentInsetClassName} mt-4`}>
                 <PlaceholderLines lines={5} />
                 <div className="mt-4 grid gap-3 md:grid-cols-2">
-                  <div className="rounded-2xl border border-white/80 bg-white/80 p-4">
+                  <div className={surfaceInsetCardClassName}>
                     <p className="text-sm font-semibold text-foreground">Formatting rail</p>
                     <p className="mt-2 text-sm leading-7 text-muted">
                       Toolbar and editor-only client interactivity will be introduced here later.
                     </p>
                   </div>
-                  <div className="rounded-2xl border border-white/80 bg-white/80 p-4">
+                  <div className={surfaceInsetCardClassName}>
                     <p className="text-sm font-semibold text-foreground">Content canvas</p>
                     <p className="mt-2 text-sm leading-7 text-muted">
                       JSON storage and sanitized HTML rendering are not connected in this pass.
@@ -69,18 +75,14 @@ export function NoteEditorPlaceholder({
             </div>
           </div>
           <div className="space-y-5">
-            <div className="rounded-[1.35rem] border border-line bg-white/75 p-5">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-accent-strong">
-                Save status slot
-              </p>
+            <div className={subtleCardClassName}>
+              <p className={eyebrowClassName}>Save status slot</p>
               <p className="mt-3 text-sm leading-7 text-muted">
                 Placeholder for future saving, saved, and generic error states.
               </p>
             </div>
-            <div className="rounded-[1.35rem] border border-line bg-white/75 p-5">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-accent-strong">
-                Share controls slot
-              </p>
+            <div className={subtleCardClassName}>
+              <p className={eyebrowClassName}>Share controls slot</p>
               <p className="mt-3 text-sm leading-7 text-muted">
                 Enable and disable share actions will appear here once the sharing flow exists.
               </p>
@@ -89,10 +91,8 @@ export function NoteEditorPlaceholder({
                 <StatusBadge tone="muted">token: placeholder</StatusBadge>
               </div>
             </div>
-            <div className="rounded-[1.35rem] border border-line bg-white/75 p-5">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-accent-strong">
-                Note metadata
-              </p>
+            <div className={subtleCardClassName}>
+              <p className={eyebrowClassName}>Note metadata</p>
               <dl className="mt-4 space-y-3 text-sm text-muted">
                 <div className="flex items-center justify-between gap-4">
                   <dt>created_at</dt>

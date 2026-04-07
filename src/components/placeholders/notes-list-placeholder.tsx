@@ -4,6 +4,7 @@ import { Panel } from "@/components/ui/panel";
 import { PlaceholderLines } from "@/components/ui/placeholder-lines";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { primaryPillButtonClassName, subtleCardClassName } from "@/components/ui/tailwind-recipes";
 
 const sampleNotes = [
   { title: "Project kickoff notes", updated: "updated_at placeholder" },
@@ -17,10 +18,7 @@ export function NotesListPlaceholder() {
       <Panel className="space-y-6">
         <SectionHeading
           actions={
-            <Link
-              className="rounded-full border border-accent/20 bg-accent px-5 py-3 text-sm font-semibold text-white transition hover:bg-accent-strong"
-              href="/notes/new"
-            >
+            <Link className={primaryPillButtonClassName} href="/notes/new">
               New note route
             </Link>
           }
@@ -32,7 +30,7 @@ export function NotesListPlaceholder() {
           {sampleNotes.map((note) => (
             <article
               key={note.title}
-              className="rounded-[1.35rem] border border-line bg-white/75 p-5 transition hover:border-accent/25 hover:bg-white"
+              className={`${subtleCardClassName} transition hover:border-accent/25 hover:bg-white`}
             >
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                 <div className="space-y-3">

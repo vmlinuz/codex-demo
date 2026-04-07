@@ -8,7 +8,7 @@ export default async function RegisterPage() {
   await redirectIfAuthenticated();
 
   return (
-    <PublicPageShell className="flex max-w-xl justify-center">
+    <PublicPageShell className="max-w-xl">
       <CredentialsForm
         companionHref="/login"
         companionLabel="Already have an account?"

@@ -2,6 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import {
+  eyebrowClassName,
+  ghostPillButtonClassName,
+  surfacePillButtonClassName,
+} from "@/components/ui/tailwind-recipes";
 import { hasAuthSessionCookie } from "@/server/auth";
 
 import "./globals.css";
@@ -23,37 +28,25 @@ export default async function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <div className="min-h-screen">
-          <header className="border-b border-white/70 bg-[rgba(245,252,250,0.82)] backdrop-blur">
+          <header className="border-b border-white/70 bg-surface-header backdrop-blur">
             <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-5">
-              <Link
-                className="text-sm font-semibold uppercase tracking-[0.3em] text-accent-strong"
-                href="/"
-              >
+              <Link className={eyebrowClassName} href="/">
                 TinyNotes
               </Link>
               <nav className="flex items-center gap-2">
                 {isAuthenticated ? (
                   <>
-                    <Link
-                      className="rounded-full border border-accent/20 bg-white/80 px-4 py-2 text-sm font-medium text-foreground shadow-[0_12px_30px_var(--shadow)] transition hover:border-accent/35 hover:bg-white"
-                      href="/notes"
-                    >
+                    <Link className={surfacePillButtonClassName} href="/notes">
                       Notes
                     </Link>
                     <SignOutButton variant="header" />
                   </>
                 ) : (
                   <>
-                    <Link
-                      className="rounded-full border border-transparent px-4 py-2 text-sm font-medium text-muted transition hover:border-accent/15 hover:bg-white/70 hover:text-foreground"
-                      href="/login"
-                    >
+                    <Link className={ghostPillButtonClassName} href="/login">
                       Login
                     </Link>
-                    <Link
-                      className="rounded-full border border-accent/20 bg-white/80 px-4 py-2 text-sm font-medium text-foreground shadow-[0_12px_30px_var(--shadow)] transition hover:border-accent/35 hover:bg-white"
-                      href="/register"
-                    >
+                    <Link className={surfacePillButtonClassName} href="/register">
                       Register
                     </Link>
                   </>

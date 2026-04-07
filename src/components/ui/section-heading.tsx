@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 
+import { eyebrowClassName } from "@/components/ui/tailwind-recipes";
+
 type SectionHeadingProps = {
   title: string;
   description?: string;
@@ -16,11 +18,7 @@ export function SectionHeading({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div className="space-y-2">
-        {eyebrow ? (
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-accent-strong">
-            {eyebrow}
-          </p>
-        ) : null}
+        {eyebrow ? <p className={eyebrowClassName}>{eyebrow}</p> : null}
         <div className="space-y-1">
           <h2 className="font-display text-3xl leading-tight text-foreground">{title}</h2>
           {description ? (

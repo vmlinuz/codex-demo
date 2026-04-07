@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { SignOutButton } from "@/components/auth/sign-out-button";
 import { Panel } from "@/components/ui/panel";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { accentCalloutClassName, eyebrowClassName } from "@/components/ui/tailwind-recipes";
 
 const navItems = [
   { href: "/notes", label: "All notes" },
@@ -48,10 +49,8 @@ export function NotesShell({
               </Link>
             ))}
           </nav>
-          <div className="mt-auto rounded-[1.4rem] border border-accent/15 bg-accent/10 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.26em] text-accent-strong">
-              Session status
-            </p>
+          <div className={`${accentCalloutClassName} mt-auto p-4`}>
+            <p className={eyebrowClassName}>Session status</p>
             <p className="mt-3 text-sm leading-7 text-muted">
               Better Auth is protecting these routes now. Note reads, edits, and sharing controls
               still land in the placeholder workspace until the note feature slice is implemented.
@@ -59,11 +58,9 @@ export function NotesShell({
           </div>
         </Panel>
         <div className="space-y-6">
-          <header className="flex flex-col gap-4 rounded-[1.75rem] border border-white/70 bg-surface-soft px-6 py-5 shadow-[0_16px_42px_var(--shadow)] backdrop-blur sm:flex-row sm:items-center sm:justify-between">
+          <header className="flex flex-col gap-4 rounded-panel border border-white/70 bg-surface-soft px-6 py-5 shadow-shell backdrop-blur sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-accent-strong">
-                Authenticated routes
-              </p>
+              <p className={eyebrowClassName}>Authenticated routes</p>
               <h2 className="mt-2 font-display text-3xl text-foreground">Your notes</h2>
             </div>
             <div className="flex flex-wrap gap-3">
