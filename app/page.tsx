@@ -1,10 +1,11 @@
-import { PublicPageShell } from "@/components/layout/public-page-shell";
-import { HomeRedirectPlaceholder } from "@/components/placeholders/home-redirect-placeholder";
+import { redirect } from "next/navigation";
 
-export default function HomePage() {
-  return (
-    <PublicPageShell className="flex max-w-2xl justify-center">
-      <HomeRedirectPlaceholder />
-    </PublicPageShell>
-  );
+import { getAuthSession } from "@/server/auth";
+
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const session = await getAuthSession();
+
+  redirect(session?.user ? "/notes" : "/login");
 }

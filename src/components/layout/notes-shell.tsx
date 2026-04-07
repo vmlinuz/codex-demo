@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { SignOutButton } from "@/components/auth/sign-out-button";
 import { Panel } from "@/components/ui/panel";
 import { StatusBadge } from "@/components/ui/status-badge";
 
@@ -12,22 +13,28 @@ const navItems = [
 
 export function NotesShell({
   children,
+  userEmail,
+  userName,
 }: Readonly<{
   children: ReactNode;
+  userEmail: string;
+  userName: string;
 }>) {
   return (
     <main className="px-6 py-8 text-foreground">
       <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
         <Panel className="flex h-full flex-col gap-8 p-6">
           <div className="space-y-4">
-            <StatusBadge tone="muted">Private workspace</StatusBadge>
+            <StatusBadge>Authenticated</StatusBadge>
             <div className="space-y-2">
               <h1 className="font-display text-3xl text-foreground">Notes workspace</h1>
               <p className="text-sm leading-7 text-muted">
-                Navigation, note creation, and sharing controls live here once the authenticated
-                experience is wired in.
+                Signed in as <span className="font-semibold text-foreground">{userName}</span>. Your
+                notes remain private unless you explicitly enable sharing.
               </p>
+              <p className="text-sm text-muted">{userEmail}</p>
             </div>
+            <SignOutButton />
           </div>
           <nav className="space-y-3">
             {navItems.map((item) => (
@@ -43,11 +50,11 @@ export function NotesShell({
           </nav>
           <div className="mt-auto rounded-[1.4rem] border border-accent/15 bg-accent/10 p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.26em] text-accent-strong">
-              Future behavior
+              Session status
             </p>
             <p className="mt-3 text-sm leading-7 text-muted">
-              Real session checks, note reads, and mutations are intentionally omitted in this
-              scaffold pass.
+              Better Auth is protecting these routes now. Note reads, edits, and sharing controls
+              still land in the placeholder workspace until the note feature slice is implemented.
             </p>
           </div>
         </Panel>
@@ -60,7 +67,8 @@ export function NotesShell({
               <h2 className="mt-2 font-display text-3xl text-foreground">Your notes</h2>
             </div>
             <div className="flex flex-wrap gap-3">
-              <StatusBadge>Server component reads later</StatusBadge>
+              <StatusBadge>{userName}</StatusBadge>
+              <StatusBadge tone="muted">{userEmail}</StatusBadge>
               <StatusBadge tone="muted">Server actions later</StatusBadge>
             </div>
           </header>

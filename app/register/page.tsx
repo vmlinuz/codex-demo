@@ -1,14 +1,19 @@
 import { PublicPageShell } from "@/components/layout/public-page-shell";
-import { AuthFormPlaceholder } from "@/components/placeholders/auth-form-placeholder";
+import { CredentialsForm } from "@/components/auth/credentials-form";
+import { redirectIfAuthenticated } from "@/server/auth";
 
-export default function RegisterPage() {
+export const dynamic = "force-dynamic";
+
+export default async function RegisterPage() {
+  await redirectIfAuthenticated();
+
   return (
     <PublicPageShell className="flex max-w-xl justify-center">
-      <AuthFormPlaceholder
+      <CredentialsForm
         companionHref="/login"
         companionLabel="Already have an account?"
-        description="Account creation will be connected later. This scaffold only reserves the form, status area, and supporting content."
-        modeLabel="Public route"
+        description="Create a credentials-only TinyNotes account and start with an authenticated workspace."
+        mode="register"
         submitLabel="Create account"
         title="Create your TinyNotes account"
       />

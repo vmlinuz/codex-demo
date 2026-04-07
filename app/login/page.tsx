@@ -1,14 +1,19 @@
 import { PublicPageShell } from "@/components/layout/public-page-shell";
-import { AuthFormPlaceholder } from "@/components/placeholders/auth-form-placeholder";
+import { CredentialsForm } from "@/components/auth/credentials-form";
+import { redirectIfAuthenticated } from "@/server/auth";
 
-export default function LoginPage() {
+export const dynamic = "force-dynamic";
+
+export default async function LoginPage() {
+  await redirectIfAuthenticated();
+
   return (
     <PublicPageShell className="flex max-w-xl justify-center">
-      <AuthFormPlaceholder
+      <CredentialsForm
         companionHref="/register"
         companionLabel="Create an account"
-        description="Credential sign-in will live here once better-auth is wired in. For now, this page only defines the final route and visual structure."
-        modeLabel="Public route"
+        description="Sign in with the email and password attached to your TinyNotes account."
+        mode="login"
         submitLabel="Sign in"
         title="Welcome back to TinyNotes"
       />
