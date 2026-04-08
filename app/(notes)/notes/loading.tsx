@@ -4,7 +4,7 @@ export default function NotesLoading() {
   return (
     <LoadingStatePlaceholder
       caption="Authenticated area"
-      description="The notes shell already exists. Session enforcement is active, and detail routes now load owned notes before rendering."
+      description="The authenticated notes workspace is loading server-rendered note data and preparing the TipTap editor surface."
       title="Preparing your notes workspace"
     />
   );

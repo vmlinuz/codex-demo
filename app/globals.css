@@ -98,3 +98,82 @@ code {
 .font-display {
   font-family: var(--font-display), serif;
 }
+
+.note-editor-surface {
+  min-height: 30rem;
+  padding: 1.5rem;
+  color: var(--foreground);
+  outline: none;
+}
+
+.note-editor-surface > :first-child {
+  margin-top: 0;
+}
+
+.note-editor-surface > :last-child {
+  margin-bottom: 0;
+}
+
+.note-editor-surface p,
+.note-editor-surface ul,
+.note-editor-surface ol,
+.note-editor-surface blockquote,
+.note-editor-surface pre {
+  margin: 0 0 1rem;
+}
+
+.note-editor-surface h1,
+.note-editor-surface h2,
+.note-editor-surface h3 {
+  margin: 1.5rem 0 0.75rem;
+  font-family: var(--font-display), serif;
+  line-height: 1.15;
+}
+
+.note-editor-surface h1 {
+  font-size: 2rem;
+}
+
+.note-editor-surface h2 {
+  font-size: 1.55rem;
+}
+
+.note-editor-surface h3 {
+  font-size: 1.2rem;
+}
+
+.note-editor-surface ul,
+.note-editor-surface ol {
+  padding-left: 1.5rem;
+}
+
+.note-editor-surface li + li {
+  margin-top: 0.35rem;
+}
+
+.note-editor-surface blockquote {
+  border-left: 4px solid rgba(20, 156, 138, 0.25);
+  padding-left: 1rem;
+  color: var(--muted);
+}
+
+.note-editor-surface pre {
+  overflow-x: auto;
+  border-radius: 1rem;
+  background: #12252a;
+  padding: 1rem 1.25rem;
+  color: #f2fffd;
+}
+
+.note-editor-surface pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+.note-editor-surface a {
+  color: var(--accent-strong);
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+}

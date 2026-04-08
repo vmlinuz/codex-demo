@@ -9,7 +9,6 @@ import { accentCalloutClassName, eyebrowClassName } from "@/components/ui/tailwi
 const navItems = [
   { href: "/notes", label: "All notes" },
   { href: "/notes/new", label: "New note" },
-  { href: "/s/example-token", label: "Public preview" },
 ];
 
 export function NotesShell({
@@ -31,7 +30,7 @@ export function NotesShell({
               <h1 className="font-display text-3xl text-foreground">Notes workspace</h1>
               <p className="text-sm leading-7 text-muted">
                 Signed in as <span className="font-semibold text-foreground">{userName}</span>. Your
-                notes remain private unless you explicitly enable sharing.
+                notes now load from SQLite and save through authenticated Server Actions.
               </p>
               <p className="text-sm text-muted">{userEmail}</p>
             </div>
@@ -52,8 +51,8 @@ export function NotesShell({
           <div className={`${accentCalloutClassName} mt-auto p-4`}>
             <p className={eyebrowClassName}>Session status</p>
             <p className="mt-3 text-sm leading-7 text-muted">
-              Better Auth is protecting these routes now. Note reads, edits, and sharing controls
-              still land in the placeholder workspace until the note feature slice is implemented.
+              Better Auth protects this workspace, reads happen server-side, and existing notes now
+              autosave through the editor after short pauses.
             </p>
           </div>
         </Panel>
@@ -66,7 +65,7 @@ export function NotesShell({
             <div className="flex flex-wrap gap-3">
               <StatusBadge>{userName}</StatusBadge>
               <StatusBadge tone="muted">{userEmail}</StatusBadge>
-              <StatusBadge tone="muted">Server actions later</StatusBadge>
+              <StatusBadge tone="muted">TipTap + autosave</StatusBadge>
             </div>
           </header>
           {children}

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 const toneClasses = {
   accent: "border-accent/15 bg-accent/10 text-accent-strong",
+  danger: "border-danger-line bg-danger-soft text-danger",
   muted: "border-line bg-white/65 text-muted",
   strong: "border-accent/20 bg-accent-soft text-accent-strong",
 } as const;

@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { NoteEditorPlaceholder } from "@/components/placeholders/note-editor-placeholder";
+import { NoteEditor } from "@/components/notes/note-editor";
 import { requireAuthSession } from "@/server/auth";
 import { findOwnedNoteById } from "@/server/notes";
 
@@ -16,17 +16,5 @@ export default async function NoteDetailPage({ params }: { params: Promise<{ id:
     notFound();
   }
 
-  const noteTitle = note.title.trim() || "Untitled note";
-
-  return (
-    <NoteEditorPlaceholder
-      createdAtLabel={note.createdAt}
-      mode="existing"
-      noteId={note.id}
-      noteLabel="Owned note"
-      shareStatusLabel={note.shareEnabled ? "share_enabled: on" : "share_enabled: off"}
-      title={noteTitle}
-      updatedAtLabel={note.updatedAt}
-    />
-  );
+  return <NoteEditor mode="existing" note={note} />;
 }
