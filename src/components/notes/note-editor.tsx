@@ -92,6 +92,9 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
     () => JSON.stringify({ serializedContent, title }),
     [serializedContent, title],
   );
+  const titleRef = useRef(title);
+  const serializedContentRef = useRef(serializedContent);
+  const currentSnapshotRef = useRef(currentSnapshot);
   const lastSavedSnapshotRef = useRef(props.mode === "existing" ? currentSnapshot : null);
   const lastFailedSnapshotRef = useRef<string | null>(null);
   const editor = useEditor(
@@ -99,14 +102,18 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
       content: initialDocument,
       editorProps: {
         attributes: {
+          "aria-label": "Note content",
           class: "note-editor-surface",
         },
       },
       extensions,
       immediatelyRender: false,
       onUpdate: ({ editor: nextEditor }) => {
+        const nextSerializedContent = serializeNoteDocument(nextEditor.getJSON());
+
         setEditorMessage(null);
-        setSerializedContent(serializeNoteDocument(nextEditor.getJSON()));
+        serializedContentRef.current = nextSerializedContent;
+        setSerializedContent(nextSerializedContent);
       },
     },
     [],
@@ -142,13 +149,18 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
   const saveState = getSaveStateDetails(savePhase);
   const resolvedToolbarState = toolbarState ?? defaultToolbarState;
 
+  useEffect(() => {
+    currentSnapshotRef.current = currentSnapshot;
+  }, [currentSnapshot]);
+
   const runAutosave = useEffectEvent(async () => {
     if (props.mode !== "existing") {
       return;
     }
 
-    const snapshotToSave = currentSnapshot;
-    const contentToSave = parseNoteDocument(serializedContent);
+    const snapshotToSave = currentSnapshotRef.current;
+    const contentToSave = parseNoteDocument(serializedContentRef.current);
+    const titleToSave = titleRef.current;
 
     if (!contentToSave) {
       setSavePhase("error");
@@ -164,7 +176,7 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
       const result = await updateNoteAction({
         contentJson: contentToSave,
         id: props.note.id,
-        title,
+        title: titleToSave,
       });
 
       if ("error" in result) {
@@ -183,7 +195,7 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
       lastFailedSnapshotRef.current = null;
       setUpdatedAt(result.updatedAt);
       setSaveErrorMessage(null);
-      setSavePhase(snapshotToSave === currentSnapshot ? "saved" : "dirty");
+      setSavePhase(snapshotToSave === currentSnapshotRef.current ? "saved" : "dirty");
     });
   });
 
@@ -223,18 +235,24 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
   }, [currentSnapshot, props.mode, runAutosave, savePhase]);
 
   function handleTitleChange(event: ChangeEvent<HTMLInputElement>) {
+    const nextTitle = event.target.value;
+
     setCreateErrorMessage(null);
     setEditorMessage(null);
-    setTitle(event.target.value);
+    titleRef.current = nextTitle;
+    setTitle(nextTitle);
   }
 
   function handleClearDraft() {
     const emptyDocument = createEmptyNoteDocument();
+    const emptySerializedContent = serializeNoteDocument(emptyDocument);
 
     setCreateErrorMessage(null);
     setEditorMessage(null);
+    titleRef.current = "";
+    serializedContentRef.current = emptySerializedContent;
     setTitle("");
-    setSerializedContent(serializeNoteDocument(emptyDocument));
+    setSerializedContent(emptySerializedContent);
     editor?.commands.setContent(emptyDocument, { emitUpdate: true });
   }
 
@@ -335,7 +353,6 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
       }
 
       router.replace(`/notes/${result.noteId}`);
-      router.refresh();
     });
   }
 

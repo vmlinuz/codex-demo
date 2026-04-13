@@ -24,3 +24,9 @@ bun dev
 Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 The app is still at scaffold stage. Use [SPEC.MD](C:\Users\ROG\prj\playground\starting-project\SPEC.MD) as the source of truth for the implementation.
+
+## Testing
+
+- `bun run test:unit` runs the Vitest unit suite.
+- `bun run test:e2e` runs the Playwright end-to-end suite against an isolated SQLite database under `data/test/e2e.sqlite`.
+- `bun run test:all` runs both suites in sequence.

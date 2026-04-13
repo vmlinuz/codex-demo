@@ -1,8 +1,16 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-function buildContentSecurityPolicy(nonce: string) {
+function buildContentSecurityPolicy({
+  allowUpgradeInsecureRequests,
+  nonce,
+}: Readonly<{
+  allowUpgradeInsecureRequests: boolean;
+  nonce: string;
+}>) {
   const isDevelopment = process.env.NODE_ENV === "development";
+  const upgradeInsecureRequestsDirective =
+    !isDevelopment && allowUpgradeInsecureRequests ? "upgrade-insecure-requests;" : "";
 
   return `
     default-src 'self';
@@ -14,7 +22,7 @@ function buildContentSecurityPolicy(nonce: string) {
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    upgrade-insecure-requests;
+    ${upgradeInsecureRequestsDirective}
   `
     .replace(/\s{2,}/g, " ")
     .trim();
@@ -22,7 +30,10 @@ function buildContentSecurityPolicy(nonce: string) {
 
 export function proxy(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
-  const contentSecurityPolicy = buildContentSecurityPolicy(nonce);
+  const contentSecurityPolicy = buildContentSecurityPolicy({
+    allowUpgradeInsecureRequests: request.nextUrl.protocol === "https:",
+    nonce,
+  });
   const requestHeaders = new Headers(request.headers);
 
   requestHeaders.set("Content-Security-Policy", contentSecurityPolicy);

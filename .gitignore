@@ -42,5 +42,16 @@ yarn-error.log*
 next-env.d.ts
 
 # local sqlite data
+/data/test/
 /data/*.db
 /data/*.db-*
+/data/**/*.db
+/data/**/*.db-*
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

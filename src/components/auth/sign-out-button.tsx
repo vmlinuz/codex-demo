@@ -1,9 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { authClient } from "@/auth/client";
+import { replaceLocation } from "@/auth/client-navigation";
 import {
   bodyErrorTextClassName,
   compactErrorTextClassName,
@@ -16,7 +16,6 @@ type SignOutButtonProps = {
 };
 
 export function SignOutButton({ variant = "default" }: SignOutButtonProps) {
-  const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -38,8 +37,7 @@ export function SignOutButton({ variant = "default" }: SignOutButtonProps) {
         return;
       }
 
-      router.replace("/login");
-      router.refresh();
+      replaceLocation("/login");
     } catch {
       setErrorMessage("Unable to sign out right now.");
     } finally {

@@ -1,6 +1,10 @@
 import StarterKit from "@tiptap/starter-kit";
 
 function normalizeUrl(url: string, defaultProtocol: string): URL | null {
+  if (/^[a-z][a-z\d+.-]*:/i.test(url) && !/^https?:/i.test(url)) {
+    return null;
+  }
+
   const normalizedUrl = url.includes("://") ? url : `${defaultProtocol}://${url}`;
 
   try {

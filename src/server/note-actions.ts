@@ -2,12 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import {
-  MAX_NOTE_CONTENT_SIZE,
-  hasMeaningfulNoteContent,
-  isNoteDocument,
-  serializeNoteDocument,
-} from "@/notes/document";
+import { validateCreateNoteInput, validateUpdateNoteInput } from "@/notes/validation";
 import type {
   CreateNoteActionInput,
   CreateNoteActionResult,
@@ -31,21 +26,16 @@ export async function createNoteAction(
     return createActionError("UNAUTHORIZED", createErrorMessage);
   }
 
-  const validatedInput = validateNoteInput(input, {
-    allowBlankDocument: false,
-    blankDocumentMessage: "Provide a title or note content before creating a note.",
-    fallbackMessage: createErrorMessage,
-    requireId: false,
-  });
+  const validatedInput = validateCreateNoteInput(input);
 
-  if ("error" in validatedInput) {
-    return validatedInput;
+  if (!validatedInput.ok) {
+    return createActionError("VALIDATION_ERROR", validatedInput.message);
   }
 
   try {
     const note = createOwnedNote({
-      contentJson: validatedInput.contentJson,
-      title: validatedInput.title,
+      contentJson: validatedInput.value.contentJson,
+      title: validatedInput.value.title,
       userId: session.user.id,
     });
 
@@ -73,18 +63,13 @@ export async function updateNoteAction(
     return createActionError("UNAUTHORIZED", updateErrorMessage);
   }
 
-  const validatedInput = validateNoteInput(input, {
-    allowBlankDocument: true,
-    blankDocumentMessage: updateErrorMessage,
-    fallbackMessage: updateErrorMessage,
-    requireId: true,
-  });
+  const validatedInput = validateUpdateNoteInput(input);
 
-  if ("error" in validatedInput) {
-    return validatedInput;
+  if (!validatedInput.ok) {
+    return createActionError("VALIDATION_ERROR", validatedInput.message);
   }
 
-  const noteId = validatedInput.id;
+  const noteId = validatedInput.value.id;
 
   if (!noteId) {
     return createActionError("VALIDATION_ERROR", updateErrorMessage);
@@ -92,9 +77,9 @@ export async function updateNoteAction(
 
   try {
     const updatedNote = updateOwnedNote({
-      contentJson: validatedInput.contentJson,
+      contentJson: validatedInput.value.contentJson,
       noteId,
-      title: validatedInput.title,
+      title: validatedInput.value.title,
       userId: session.user.id,
     });
 
@@ -123,48 +108,5 @@ function createActionError(code: NoteActionErrorCode, message: string): NoteActi
       code,
       message,
     },
-  };
-}
-
-function validateNoteInput(
-  input: CreateNoteActionInput | UpdateNoteActionInput,
-  options: Readonly<{
-    allowBlankDocument: boolean;
-    blankDocumentMessage: string;
-    fallbackMessage: string;
-    requireId: boolean;
-  }>,
-) {
-  if (
-    typeof input !== "object" ||
-    input === null ||
-    typeof input.title !== "string" ||
-    !isNoteDocument(input.contentJson)
-  ) {
-    return createActionError("VALIDATION_ERROR", options.fallbackMessage);
-  }
-
-  if (options.requireId && (!("id" in input) || typeof input.id !== "string" || !input.id.trim())) {
-    return createActionError("VALIDATION_ERROR", options.fallbackMessage);
-  }
-
-  const serializedDocument = serializeNoteDocument(input.contentJson);
-
-  if (serializedDocument.length > MAX_NOTE_CONTENT_SIZE) {
-    return createActionError("VALIDATION_ERROR", "Note content is too large.");
-  }
-
-  if (
-    !options.allowBlankDocument &&
-    !input.title.trim() &&
-    !hasMeaningfulNoteContent(input.contentJson)
-  ) {
-    return createActionError("VALIDATION_ERROR", options.blankDocumentMessage);
-  }
-
-  return {
-    contentJson: serializedDocument,
-    id: "id" in input ? input.id : undefined,
-    title: input.title,
   };
 }

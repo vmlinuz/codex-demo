@@ -3,10 +3,10 @@
 import type { FormEvent } from "react";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { authClient } from "@/auth/client";
+import { replaceLocation } from "@/auth/client-navigation";
 import { deriveDisplayNameFromEmail } from "@/auth/derive-display-name";
 import { Panel } from "@/components/ui/panel";
 import { SectionHeading } from "@/components/ui/section-heading";
@@ -40,25 +40,32 @@ export function CredentialsForm({
   submitLabel,
   title,
 }: Readonly<CredentialsFormProps>) {
-  const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isHydrated, setIsHydrated] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const isBusy = !isHydrated || isSubmitting;
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
 
   const genericErrorMessage =
     mode === "login"
       ? "Unable to sign in with those credentials."
       : "Unable to create account with those details.";
 
-  const statusLabel = isSubmitting
-    ? mode === "login"
-      ? "Signing in"
-      : "Creating account"
-    : "Credentials only";
+  const statusLabel = !isHydrated
+    ? "Preparing form"
+    : isSubmitting
+      ? mode === "login"
+        ? "Signing in"
+        : "Creating account"
+      : "Credentials only";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (isSubmitting) {
+    if (isBusy) {
       return;
     }
 
@@ -87,8 +94,7 @@ export function CredentialsForm({
         return;
       }
 
-      router.replace("/notes");
-      router.refresh();
+      replaceLocation("/notes");
     } catch {
       setErrorMessage(genericErrorMessage);
     } finally {
@@ -111,7 +117,7 @@ export function CredentialsForm({
           <input
             autoComplete="email"
             className={fieldClassName}
-            disabled={isSubmitting}
+            disabled={isBusy}
             id={`${mode}-email`}
             name="email"
             placeholder="you@example.com"
@@ -132,7 +138,7 @@ export function CredentialsForm({
           <input
             autoComplete={mode === "login" ? "current-password" : "new-password"}
             className={fieldClassName}
-            disabled={isSubmitting}
+            disabled={isBusy}
             id={`${mode}-password`}
             minLength={8}
             name="password"
@@ -158,7 +164,7 @@ export function CredentialsForm({
             </div>
           )}
         </div>
-        <button className={submitClassName} disabled={isSubmitting} type="submit">
+        <button className={submitClassName} disabled={isBusy} type="submit">
           {isSubmitting ? "Please wait..." : submitLabel}
         </button>
       </form>
