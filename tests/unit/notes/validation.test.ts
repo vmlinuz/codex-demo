@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import { MAX_NOTE_CONTENT_SIZE, createEmptyNoteDocument } from "@/notes/document";
-import { validateCreateNoteInput, validateUpdateNoteInput } from "@/notes/validation";
+import {
+  validateCreateNoteInput,
+  validateNoteIdInput,
+  validateUpdateNoteInput,
+} from "@/notes/validation";
 
 describe("note input validation", () => {
   it("rejects blank create requests with the user-facing validation message", () => {
@@ -59,6 +63,20 @@ describe("note input validation", () => {
         contentJson: '{"type":"doc","content":[{"type":"paragraph"}]}',
         id: "note-123",
         title: "",
+      },
+    });
+  });
+
+  it("validates note-id-only payloads for delete/share actions", () => {
+    expect(validateNoteIdInput({})).toEqual({
+      message: "Unable to process that note right now.",
+      ok: false,
+    });
+
+    expect(validateNoteIdInput({ id: "note-123" })).toEqual({
+      ok: true,
+      value: {
+        id: "note-123",
       },
     });
   });

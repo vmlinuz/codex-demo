@@ -8,11 +8,16 @@ import {
 const createFallbackMessage = "Unable to create note right now.";
 const createBlankDocumentMessage = "Provide a title or note content before creating a note.";
 const updateFallbackMessage = "Unable to save note right now.";
+const noteIdFallbackMessage = "Unable to process that note right now.";
 
 type ValidatedNoteInput = {
   contentJson: string;
   id?: string;
   title: string;
+};
+
+type ValidatedNoteIdInput = {
+  id: string;
 };
 
 type NoteInputValidationResult =
@@ -25,10 +30,24 @@ type NoteInputValidationResult =
       ok: false;
     };
 
+type NoteIdValidationResult =
+  | {
+      ok: true;
+      value: ValidatedNoteIdInput;
+    }
+  | {
+      message: string;
+      ok: false;
+    };
+
 type NoteInputShape = {
   contentJson: unknown;
   id?: unknown;
   title: unknown;
+};
+
+type NoteIdInputShape = {
+  id: unknown;
 };
 
 export function validateCreateNoteInput(input: unknown): NoteInputValidationResult {
@@ -47,6 +66,31 @@ export function validateUpdateNoteInput(input: unknown): NoteInputValidationResu
     fallbackMessage: updateFallbackMessage,
     requireId: true,
   });
+}
+
+export function validateNoteIdInput(input: unknown): NoteIdValidationResult {
+  if (typeof input !== "object" || input === null) {
+    return {
+      message: noteIdFallbackMessage,
+      ok: false,
+    };
+  }
+
+  const noteInput = input as NoteIdInputShape;
+
+  if (typeof noteInput.id !== "string" || !noteInput.id.trim()) {
+    return {
+      message: noteIdFallbackMessage,
+      ok: false,
+    };
+  }
+
+  return {
+    ok: true,
+    value: {
+      id: noteInput.id,
+    },
+  };
 }
 
 function validateNoteInput(

@@ -3,6 +3,7 @@ import "server-only";
 import { createHash } from "node:crypto";
 
 import { createEmptyNoteDocument, getNoteExcerpt, parseNoteDocument } from "@/notes/document";
+import { renderSharedNoteHtml } from "@/notes/render-shared-note-html";
 import type { NoteDetail, NoteSummary } from "@/notes/types";
 import { getDb } from "@/server/db/client";
 
@@ -43,6 +44,34 @@ const UPDATE_NOTE_SQL = `
   WHERE id = ? AND user_id = ?;
 `;
 
+const DELETE_NOTE_SQL = `
+  DELETE FROM note
+  WHERE id = ? AND user_id = ?;
+`;
+
+const ENABLE_NOTE_SHARE_SQL = `
+  UPDATE note
+  SET share_enabled = 1, updated_at = ?
+  WHERE id = ? AND user_id = ?;
+`;
+
+const DISABLE_NOTE_SHARE_SQL = `
+  UPDATE note
+  SET share_enabled = 0, updated_at = ?
+  WHERE id = ? AND user_id = ?;
+`;
+
+const DISABLE_ACTIVE_SHARES_SQL = `
+  UPDATE note_share
+  SET enabled = 0, disabled_at = ?
+  WHERE note_id = ? AND enabled = 1;
+`;
+
+const INSERT_NOTE_SHARE_SQL = `
+  INSERT INTO note_share (id, note_id, token_hash, enabled, created_at, disabled_at)
+  VALUES (?, ?, ?, 1, ?, NULL);
+`;
+
 const SELECT_NOTE_SHARE_STATE_SQL = `
   SELECT share_enabled AS shareEnabled
   FROM note
@@ -54,6 +83,7 @@ const SELECT_SHARED_NOTE_SQL = `
   SELECT
     n.id,
     n.title,
+    n.content_json AS contentJson,
     n.created_at AS createdAt,
     n.updated_at AS updatedAt
   FROM note_share s
@@ -74,6 +104,7 @@ type OwnedNoteRow = {
 };
 
 type SharedNoteRow = {
+  contentJson: string;
   createdAt: string;
   id: string;
   title: string;
@@ -81,6 +112,7 @@ type SharedNoteRow = {
 };
 
 export type SharedNote = {
+  contentHtml: string;
   createdAt: string;
   id: string;
   title: string;
@@ -190,6 +222,82 @@ export function updateOwnedNote({
   };
 }
 
+export function deleteOwnedNote({
+  noteId,
+  userId,
+}: Readonly<{
+  noteId: string;
+  userId: string;
+}>): boolean {
+  const result = getDb().prepare(DELETE_NOTE_SQL).run(noteId, userId) as { changes: number };
+
+  return Boolean(result.changes);
+}
+
+export function enableNoteShare({
+  noteId,
+  userId,
+}: Readonly<{
+  noteId: string;
+  userId: string;
+}>): { shareToken: string; updatedAt: string } | null {
+  const db = getDb();
+  const updatedAt = new Date().toISOString();
+  const shareToken = crypto.randomUUID();
+
+  const result = db.transaction(() => {
+    const enabledNote = db.prepare(ENABLE_NOTE_SHARE_SQL).run(updatedAt, noteId, userId) as {
+      changes: number;
+    };
+
+    if (!enabledNote.changes) {
+      return null;
+    }
+
+    db.prepare(DISABLE_ACTIVE_SHARES_SQL).run(updatedAt, noteId);
+    db.prepare(INSERT_NOTE_SHARE_SQL).run(
+      crypto.randomUUID(),
+      noteId,
+      hashShareToken(shareToken),
+      updatedAt,
+    );
+
+    return {
+      shareToken,
+      updatedAt,
+    };
+  })();
+
+  return result;
+}
+
+export function disableNoteShare({
+  noteId,
+  userId,
+}: Readonly<{
+  noteId: string;
+  userId: string;
+}>): { updatedAt: string } | null {
+  const db = getDb();
+  const updatedAt = new Date().toISOString();
+
+  const result = db.transaction(() => {
+    const disabledNote = db.prepare(DISABLE_NOTE_SHARE_SQL).run(updatedAt, noteId, userId) as {
+      changes: number;
+    };
+
+    if (!disabledNote.changes) {
+      return null;
+    }
+
+    db.prepare(DISABLE_ACTIVE_SHARES_SQL).run(updatedAt, noteId);
+
+    return { updatedAt };
+  })();
+
+  return result;
+}
+
 function hashShareToken(token: string) {
   return createHash("sha256").update(token).digest("hex");
 }
@@ -203,7 +311,16 @@ export function findSharedNoteByToken(token: string): SharedNote | null {
     return null;
   }
 
+  const content = parseNoteDocument(row.contentJson);
+
+  if (!content) {
+    console.error("Stored shared note content is invalid JSON.", {
+      noteId: row.id,
+    });
+  }
+
   return {
+    contentHtml: renderSharedNoteHtml(content ?? createEmptyNoteDocument()),
     createdAt: row.createdAt,
     id: row.id,
     title: row.title,

@@ -37,6 +37,39 @@ export type UpdateNoteActionResult =
     }
   | NoteActionError;
 
+export type DeleteNoteActionInput = {
+  id: string;
+};
+
+export type DeleteNoteActionResult =
+  | {
+      deleted: true;
+    }
+  | NoteActionError;
+
+export type EnableShareActionInput = {
+  id: string;
+};
+
+export type EnableShareActionResult =
+  | {
+      shareEnabled: true;
+      shareUrl: string;
+      updatedAt: string;
+    }
+  | NoteActionError;
+
+export type DisableShareActionInput = {
+  id: string;
+};
+
+export type DisableShareActionResult =
+  | {
+      shareEnabled: false;
+      updatedAt: string;
+    }
+  | NoteActionError;
+
 export type NoteSummary = {
   createdAt: string;
   excerpt: string;

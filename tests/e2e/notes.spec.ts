@@ -1,8 +1,10 @@
 import { expect, test } from "@playwright/test";
 
-import { createTestUser, registerViaUi } from "./helpers/auth";
+import { createTestUser, loginViaUi, registerViaUi, signOutViaUi } from "./helpers/auth";
 
-test("authenticated users can create notes, autosave edits, and get the custom 404 for missing notes", async ({
+const notFoundHeading = "This page drifted out of the acqua current";
+
+test("authenticated users can create notes, autosave edits, delete notes, and manage shared links", async ({
   page,
 }, testInfo) => {
   const user = createTestUser(testInfo);
@@ -25,6 +27,8 @@ test("authenticated users can create notes, autosave edits, and get the custom 4
 
   await expect(page).toHaveURL(/\/notes\/[^/]+$/);
   await expect(page.getByLabel("Title")).toHaveValue("Quarterly planning");
+
+  const createdNoteUrl = page.url();
 
   await page.waitForTimeout(500);
   await page.getByLabel("Title").fill("Quarterly planning updated");
@@ -66,15 +70,53 @@ test("authenticated users can create notes, autosave edits, and get the custom 4
     "none",
   );
 
-  await page.goto("/notes");
-  await expect(
-    page.getByRole("heading", { level: 3, name: /Quarterly planning updated/i }),
-  ).toBeVisible();
-  await expect(page.getByText(/Autosave should persist this change\./)).toBeVisible();
-  await expect(page.getByText(/First bullet/)).toBeVisible();
-  await page.goto("/notes/does-not-exist");
+  await page.getByRole("button", { name: "Enable sharing" }).click();
+  await expect(page.getByText("Share URL (shown once after enabling)")).toBeVisible();
+  const initialShareUrl = await page.getByLabel("Latest share URL").inputValue();
+
+  await signOutViaUi(page);
+  await page.goto(initialShareUrl);
+  await expect(page.getByRole("heading", { name: "Quarterly planning updated" })).toBeVisible();
+  await expect(page.getByText("Agenda and action items for the quarter.")).toBeVisible();
+  await expect(page.getByText("First bullet")).toBeVisible();
+
+  await loginViaUi(page, user);
+  await page.goto(createdNoteUrl);
+
+  await page.getByRole("button", { name: "Disable sharing" }).click();
+  await expect(page.getByText("Share URL (shown once after enabling)")).not.toBeVisible();
+
+  await signOutViaUi(page);
+  await page.goto(initialShareUrl);
+  await expect(page.getByRole("heading", { name: notFoundHeading })).toBeVisible();
+
+  await loginViaUi(page, user);
+  await page.goto(createdNoteUrl);
+
+  await page.getByRole("button", { name: "Enable sharing" }).click();
+  const rotatedShareUrl = await page.getByLabel("Latest share URL").inputValue();
+  expect(rotatedShareUrl).not.toBe(initialShareUrl);
+
+  await signOutViaUi(page);
+  await page.goto(initialShareUrl);
+  await expect(page.getByRole("heading", { name: notFoundHeading })).toBeVisible();
+  await page.goto(rotatedShareUrl);
+  await expect(page.getByRole("heading", { name: "Quarterly planning updated" })).toBeVisible();
+
+  await loginViaUi(page, user);
+  await page.goto(createdNoteUrl);
+
+  await page.getByRole("button", { name: "Delete note" }).click();
+  await page.getByRole("button", { name: "Confirm delete" }).click();
+  await expect(page).toHaveURL(/\/notes$/);
 
   await expect(
-    page.getByRole("heading", { name: "This page drifted out of the acqua current" }),
-  ).toBeVisible();
+    page.getByRole("heading", { level: 3, name: /Quarterly planning updated/i }),
+  ).not.toBeVisible();
+
+  await page.goto(createdNoteUrl);
+  await expect(page.getByRole("heading", { name: notFoundHeading })).toBeVisible();
+
+  await page.goto(rotatedShareUrl);
+  await expect(page.getByRole("heading", { name: notFoundHeading })).toBeVisible();
 });

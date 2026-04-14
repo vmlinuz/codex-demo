@@ -7,7 +7,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useEffectEvent, useMemo, useRef, useState, useTransition } from "react";
 
-import { createNoteAction, updateNoteAction } from "@/server/note-actions";
 import { Panel } from "@/components/ui/panel";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -27,6 +26,13 @@ import {
 import { formatNoteDate } from "@/notes/formatting";
 import { createNoteEditorExtensions, normalizeHttpUrl } from "@/notes/tiptap";
 import type { NoteDetail } from "@/notes/types";
+import {
+  createNoteAction,
+  deleteNoteAction,
+  disableShareAction,
+  enableShareAction,
+  updateNoteAction,
+} from "@/server/note-actions";
 
 const AUTOSAVE_DELAY = 1000;
 
@@ -82,10 +88,20 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
   const [createErrorMessage, setCreateErrorMessage] = useState<string | null>(null);
   const [editorMessage, setEditorMessage] = useState<string | null>(null);
   const [saveErrorMessage, setSaveErrorMessage] = useState<string | null>(null);
+  const [shareErrorMessage, setShareErrorMessage] = useState<string | null>(null);
+  const [deleteErrorMessage, setDeleteErrorMessage] = useState<string | null>(null);
   const [updatedAt, setUpdatedAt] = useState(
     props.mode === "existing" ? props.note.updatedAt : null,
   );
+  const [shareEnabled, setShareEnabled] = useState(
+    props.mode === "existing" ? props.note.shareEnabled : false,
+  );
+  const [latestShareUrl, setLatestShareUrl] = useState<string | null>(null);
+  const [latestShareAbsoluteUrl, setLatestShareAbsoluteUrl] = useState<string | null>(null);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const [isCreating, startCreateTransition] = useTransition();
+  const [isTogglingShare, startShareTransition] = useTransition();
+  const [isDeleting, startDeleteTransition] = useTransition();
   const [, startAutosaveTransition] = useTransition();
   const extensions = useMemo(() => createNoteEditorExtensions(), []);
   const currentSnapshot = useMemo(
@@ -103,7 +119,7 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
       editorProps: {
         attributes: {
           "aria-label": "Note content",
-          class: "note-editor-surface",
+          class: "note-editor-surface note-rich-text",
         },
       },
       extensions,
@@ -194,6 +210,7 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
       lastSavedSnapshotRef.current = snapshotToSave;
       lastFailedSnapshotRef.current = null;
       setUpdatedAt(result.updatedAt);
+      setShareEnabled(result.shareEnabled);
       setSaveErrorMessage(null);
       setSavePhase(snapshotToSave === currentSnapshotRef.current ? "saved" : "dirty");
     });
@@ -353,6 +370,97 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
       }
 
       router.replace(`/notes/${result.noteId}`);
+    });
+  }
+
+  function handleToggleShare() {
+    if (props.mode !== "existing") {
+      return;
+    }
+
+    setShareErrorMessage(null);
+
+    startShareTransition(async () => {
+      if (!shareEnabled) {
+        const result = await enableShareAction({ id: props.note.id });
+
+        if ("error" in result) {
+          setShareErrorMessage(result.error.message);
+
+          if (result.error.code === "NOT_FOUND" || result.error.code === "UNAUTHORIZED") {
+            router.refresh();
+          }
+
+          return;
+        }
+
+        const absoluteUrl = new URL(result.shareUrl, window.location.origin).toString();
+
+        setShareEnabled(true);
+        setUpdatedAt(result.updatedAt);
+        setLatestShareUrl(result.shareUrl);
+        setLatestShareAbsoluteUrl(absoluteUrl);
+        return;
+      }
+
+      const result = await disableShareAction({ id: props.note.id });
+
+      if ("error" in result) {
+        setShareErrorMessage(result.error.message);
+
+        if (result.error.code === "NOT_FOUND" || result.error.code === "UNAUTHORIZED") {
+          router.refresh();
+        }
+
+        return;
+      }
+
+      setShareEnabled(false);
+      setUpdatedAt(result.updatedAt);
+      setLatestShareUrl(null);
+      setLatestShareAbsoluteUrl(null);
+    });
+  }
+
+  function handleCopyShareUrl() {
+    if (!latestShareUrl) {
+      return;
+    }
+
+    if (!latestShareAbsoluteUrl) {
+      return;
+    }
+
+    void navigator.clipboard.writeText(latestShareAbsoluteUrl);
+  }
+
+  function handleDeleteClick() {
+    if (props.mode !== "existing") {
+      return;
+    }
+
+    if (!confirmingDelete) {
+      setDeleteErrorMessage(null);
+      setConfirmingDelete(true);
+      return;
+    }
+
+    startDeleteTransition(async () => {
+      const result = await deleteNoteAction({ id: props.note.id });
+
+      if ("error" in result) {
+        setDeleteErrorMessage(result.error.message);
+        setConfirmingDelete(false);
+
+        if (result.error.code === "NOT_FOUND" || result.error.code === "UNAUTHORIZED") {
+          router.refresh();
+        }
+
+        return;
+      }
+
+      router.replace("/notes");
+      router.refresh();
     });
   }
 
@@ -523,21 +631,102 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
                 label="updated_at"
                 value={updatedAt ? formatNoteDate(updatedAt) : "Autosave starts after creation"}
               />
-              <MetadataRow label="visibility" value={getVisibilityLabel(props)} />
+              <MetadataRow
+                label="visibility"
+                value={shareEnabled ? "Shared link active" : "Private note"}
+              />
               <MetadataRow label="mode" value={props.mode} />
             </dl>
           </div>
-          <div className={subtleCardClassName}>
-            <p className={eyebrowClassName}>Scope guardrails</p>
-            <div className="mt-3 space-y-3 text-sm leading-7 text-muted">
-              <p>This pass covers authenticated list, create, and edit flows only.</p>
-              <p>Deletion remains intentionally out of scope.</p>
-              <p>
-                Sharing stays untouched here, though current visibility is still reflected from the
-                database.
-              </p>
+          {props.mode === "existing" ? (
+            <div className={subtleCardClassName}>
+              <p className={eyebrowClassName}>Sharing</p>
+              <div className="mt-3 space-y-3 text-sm leading-7 text-muted">
+                <p>
+                  {shareEnabled
+                    ? "Public sharing is active for this note. Disable it to invalidate the public link."
+                    : "Enable sharing to generate a public URL. Re-enabling rotates the token."}
+                </p>
+                <button
+                  className={`${shareEnabled ? secondaryPillButtonClassName : primaryPillButtonClassName} disabled:cursor-not-allowed disabled:opacity-55`}
+                  disabled={isTogglingShare}
+                  onClick={handleToggleShare}
+                  type="button"
+                >
+                  {isTogglingShare
+                    ? shareEnabled
+                      ? "Disabling share..."
+                      : "Enabling share..."
+                    : shareEnabled
+                      ? "Disable sharing"
+                      : "Enable sharing"}
+                </button>
+                {latestShareUrl ? (
+                  <div className="space-y-2 rounded-2xl border border-line bg-white/75 p-3">
+                    <p className="text-xs text-muted">Share URL (shown once after enabling)</p>
+                    <label className="space-y-2">
+                      <span className="text-xs text-muted">Latest share URL</span>
+                      <input
+                        aria-label="Latest share URL"
+                        className="w-full rounded-xl border border-line bg-white px-3 py-2 text-sm text-foreground"
+                        readOnly
+                        value={latestShareAbsoluteUrl ?? latestShareUrl}
+                      />
+                    </label>
+                    <button
+                      className={secondaryPillButtonClassName}
+                      onClick={handleCopyShareUrl}
+                      type="button"
+                    >
+                      Copy URL
+                    </button>
+                  </div>
+                ) : null}
+                {shareErrorMessage ? (
+                  <p aria-live="polite" className={bodyErrorTextClassName}>
+                    {shareErrorMessage}
+                  </p>
+                ) : null}
+              </div>
             </div>
-          </div>
+          ) : null}
+          {props.mode === "existing" ? (
+            <div className={subtleCardClassName}>
+              <p className={eyebrowClassName}>Delete note</p>
+              <div className="mt-3 space-y-3 text-sm leading-7 text-muted">
+                <p>This permanently deletes the note and invalidates any shared links.</p>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    className="rounded-full border border-danger-line bg-danger-soft px-5 py-3 text-sm font-semibold text-foreground transition hover:border-danger/40"
+                    disabled={isDeleting}
+                    onClick={handleDeleteClick}
+                    type="button"
+                  >
+                    {isDeleting
+                      ? "Deleting..."
+                      : confirmingDelete
+                        ? "Confirm delete"
+                        : "Delete note"}
+                  </button>
+                  {confirmingDelete ? (
+                    <button
+                      className={secondaryPillButtonClassName}
+                      disabled={isDeleting}
+                      onClick={() => setConfirmingDelete(false)}
+                      type="button"
+                    >
+                      Cancel
+                    </button>
+                  ) : null}
+                </div>
+                {deleteErrorMessage ? (
+                  <p aria-live="polite" className={bodyErrorTextClassName}>
+                    {deleteErrorMessage}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
           <div className={subtleCardClassName}>
             <p className={eyebrowClassName}>Navigation</p>
             <div className="mt-3 flex flex-wrap gap-3">
@@ -589,14 +778,6 @@ function MetadataRow({ label, value }: Readonly<{ label: string; value: string }
       <dd className="text-right text-foreground">{value}</dd>
     </div>
   );
-}
-
-function getVisibilityLabel(props: NoteEditorProps): string {
-  if (props.mode === "new") {
-    return "Private draft";
-  }
-
-  return props.note.shareEnabled ? "Shared link active" : "Private note";
 }
 
 function getSaveStateDetails(savePhase: SavePhase) {

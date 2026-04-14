@@ -4,7 +4,7 @@ import { dirname, resolve } from "node:path";
 
 import { Database } from "bun:sqlite";
 
-import { createEmptyNoteDocument, serializeNoteDocument } from "../../../src/notes/document";
+import { serializeNoteDocument } from "../../../src/notes/document";
 import { E2E_DB_PATH, SEEDED_SHARED_NOTE } from "../config";
 
 const MIGRATION_PATHS = [
@@ -39,7 +39,15 @@ function main() {
     const enabledNoteId = randomUUID();
     const disabledNoteId = randomUUID();
     const timestamp = new Date("2026-04-13T08:00:00.000Z").toISOString();
-    const contentJson = serializeNoteDocument(createEmptyNoteDocument());
+    const contentJson = serializeNoteDocument({
+      content: [
+        {
+          content: [{ text: SEEDED_SHARED_NOTE.paragraphText, type: "text" }],
+          type: "paragraph",
+        },
+      ],
+      type: "doc",
+    });
 
     database
       .prepare(

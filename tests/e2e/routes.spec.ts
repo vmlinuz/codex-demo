@@ -17,14 +17,14 @@ test("public share routes resolve valid tokens and hide invalid ones behind the 
   page,
 }) => {
   await page.goto(`/s/${SEEDED_SHARED_NOTE.enabledToken}`, { waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("heading", { name: "Shared note placeholder" })).toBeVisible();
   await expect(page.getByRole("heading", { name: SEEDED_SHARED_NOTE.title })).toBeVisible();
+  await expect(page.getByText(SEEDED_SHARED_NOTE.paragraphText)).toBeVisible();
 
   await page.goto(`/s/${SEEDED_SHARED_NOTE.disabledToken}`, { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("heading", { name: notFoundHeading })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Shared note placeholder" })).not.toBeVisible();
+  await expect(page.getByRole("heading", { name: SEEDED_SHARED_NOTE.title })).not.toBeVisible();
 
   await page.goto("/s/not-a-real-token", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("heading", { name: notFoundHeading })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Shared note placeholder" })).not.toBeVisible();
+  await expect(page.getByRole("heading", { name: SEEDED_SHARED_NOTE.title })).not.toBeVisible();
 });

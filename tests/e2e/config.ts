@@ -8,5 +8,6 @@ export const E2E_DB_PATH = resolve("data", "test", "e2e.sqlite");
 export const SEEDED_SHARED_NOTE = {
   disabledToken: "shared-note-disabled-token",
   enabledToken: "shared-note-enabled-token",
+  paragraphText: "This seeded shared note is publicly readable.",
   title: "Seeded public note",
 } as const;

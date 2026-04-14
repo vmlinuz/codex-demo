@@ -1,7 +1,5 @@
 import Link from "next/link";
 
-import { formatNoteDate } from "@/notes/formatting";
-import type { NoteSummary } from "@/notes/types";
 import { Panel } from "@/components/ui/panel";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -10,6 +8,8 @@ import {
   secondaryPillButtonClassName,
   subtleCardClassName,
 } from "@/components/ui/tailwind-recipes";
+import { formatNoteDate } from "@/notes/formatting";
+import type { NoteSummary } from "@/notes/types";
 
 type NotesListProps = {
   notes: NoteSummary[];
@@ -62,8 +62,8 @@ export function NotesList({ notes }: Readonly<NotesListProps>) {
           <div className="rounded-card-lg border border-dashed border-accent/20 bg-accent/5 px-6 py-8">
             <h3 className="font-display text-2xl text-foreground">No notes yet</h3>
             <p className="mt-3 max-w-xl text-sm leading-7 text-muted">
-              Create your first note to open the authenticated TipTap workspace. Notes stay private
-              unless you explicitly enable sharing in a later pass.
+              Create your first note to open the authenticated TipTap workspace. Notes can be shared
+              later from the note detail page.
             </p>
             <div className="mt-5">
               <Link className={secondaryPillButtonClassName} href="/notes/new">
@@ -76,7 +76,7 @@ export function NotesList({ notes }: Readonly<NotesListProps>) {
       <div className="space-y-6">
         <Panel className="space-y-4">
           <SectionHeading
-            description="The authenticated notes area now uses real server reads and mutations while staying within the fixed product boundaries from the spec."
+            description="The authenticated notes area uses server reads and server-side mutations while keeping ownership checks in the data layer."
             eyebrow="Workspace rules"
             title="How it behaves"
           />
@@ -88,13 +88,13 @@ export function NotesList({ notes }: Readonly<NotesListProps>) {
         </Panel>
         <Panel className="space-y-4">
           <SectionHeading
-            description="The navigation stays intentionally focused so note creation and editing remain the primary path."
+            description="Delete and share controls are available per note without changing the streamlined list workflow."
             eyebrow="Current scope"
-            title="What is deferred"
+            title="What is included"
           />
           <div className="space-y-3 text-sm leading-7 text-muted">
-            <p>Note deletion is intentionally not part of this pass.</p>
-            <p>Public share controls and token views remain unchanged.</p>
+            <p>Delete and share controls live on the note detail route.</p>
+            <p>Public links are tokenized and can be rotated by re-enabling sharing.</p>
             <p>No search, filtering, or alternate sort modes are introduced.</p>
           </div>
         </Panel>
