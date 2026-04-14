@@ -357,207 +357,203 @@ export function NoteEditor(props: Readonly<NoteEditorProps>) {
   }
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-      <Panel className="space-y-6">
-        <SectionHeading
-          actions={
-            <>
-              <StatusBadge>{props.mode === "existing" ? "Existing note" : "New note"}</StatusBadge>
-              {props.mode === "existing" ? (
-                <StatusBadge tone="muted">id: {props.note.id}</StatusBadge>
-              ) : null}
-            </>
-          }
-          description={
-            props.mode === "existing"
-              ? "Autosave keeps this note up to date after short pauses while you write."
-              : "Create a note with a dedicated title field and a TipTap rich-text body."
-          }
-          eyebrow={props.mode === "existing" ? "GET /notes/[id]" : "GET /notes/new"}
-          title={
-            title.trim() || (props.mode === "existing" ? "Untitled note" : "Create a new note")
-          }
-        />
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_230px]">
-          <div className="space-y-5">
-            <div className={subtleCardClassName}>
-              <label className="space-y-3" htmlFor="note-title">
-                <span className={eyebrowClassName}>Title</span>
-                <input
-                  className={inputClassName}
-                  id="note-title"
-                  maxLength={250}
-                  onChange={handleTitleChange}
-                  placeholder="Give this note a clear title"
-                  type="text"
-                  value={title}
-                />
-              </label>
+    <Panel className="space-y-6">
+      <SectionHeading
+        actions={
+          <>
+            <StatusBadge>{props.mode === "existing" ? "Existing note" : "New note"}</StatusBadge>
+            {props.mode === "existing" ? (
+              <StatusBadge tone="muted">id: {props.note.id}</StatusBadge>
+            ) : null}
+          </>
+        }
+        description={
+          props.mode === "existing"
+            ? "Autosave keeps this note up to date after short pauses while you write."
+            : "Create a note with a dedicated title field and a TipTap rich-text body."
+        }
+        eyebrow={props.mode === "existing" ? "GET /notes/[id]" : "GET /notes/new"}
+        title={title.trim() || (props.mode === "existing" ? "Untitled note" : "Create a new note")}
+      />
+      <div className="grid gap-5 2xl:grid-cols-[minmax(0,1fr)_280px] 2xl:items-start">
+        <div className="space-y-5">
+          <div className={subtleCardClassName}>
+            <label className="space-y-3" htmlFor="note-title">
+              <span className={eyebrowClassName}>Title</span>
+              <input
+                className={inputClassName}
+                id="note-title"
+                maxLength={250}
+                onChange={handleTitleChange}
+                placeholder="Give this note a clear title"
+                type="text"
+                value={title}
+              />
+            </label>
+          </div>
+          <div className="rounded-card border border-line bg-white/80 p-4 shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
+            <div className="flex flex-wrap gap-2 border-b border-line pb-4">
+              <ToolbarButton
+                active={resolvedToolbarState.isBold}
+                label="Bold"
+                onClick={handleToggleBold}
+              />
+              <ToolbarButton
+                active={resolvedToolbarState.isItalic}
+                label="Italic"
+                onClick={handleToggleItalic}
+              />
+              <ToolbarButton
+                active={resolvedToolbarState.isUnderline}
+                label="Underline"
+                onClick={handleToggleUnderline}
+              />
+              <ToolbarButton
+                active={resolvedToolbarState.isStrike}
+                label="Strike"
+                onClick={handleToggleStrike}
+              />
+              <ToolbarButton
+                active={resolvedToolbarState.isHeading1}
+                label="H1"
+                onClick={handleToggleHeading1}
+              />
+              <ToolbarButton
+                active={resolvedToolbarState.isHeading2}
+                label="H2"
+                onClick={handleToggleHeading2}
+              />
+              <ToolbarButton
+                active={resolvedToolbarState.isBulletList}
+                label="Bullets"
+                onClick={handleToggleBulletList}
+              />
+              <ToolbarButton
+                active={resolvedToolbarState.isOrderedList}
+                label="Numbers"
+                onClick={handleToggleOrderedList}
+              />
+              <ToolbarButton
+                active={resolvedToolbarState.isBlockquote}
+                label="Quote"
+                onClick={handleToggleBlockquote}
+              />
+              <ToolbarButton
+                active={resolvedToolbarState.isCodeBlock}
+                label="Code"
+                onClick={handleToggleCodeBlock}
+              />
+              <ToolbarButton
+                active={resolvedToolbarState.isLink}
+                disabled={!resolvedToolbarState.canUseLink}
+                label={resolvedToolbarState.isLink ? "Unlink" : "Link"}
+                onClick={handleLinkAction}
+              />
             </div>
-            <div className="rounded-card border border-line bg-white/80 p-4 shadow-[0_18px_40px_rgba(15,23,42,0.06)]">
-              <div className="flex flex-wrap gap-2 border-b border-line pb-4">
-                <ToolbarButton
-                  active={resolvedToolbarState.isBold}
-                  label="Bold"
-                  onClick={handleToggleBold}
-                />
-                <ToolbarButton
-                  active={resolvedToolbarState.isItalic}
-                  label="Italic"
-                  onClick={handleToggleItalic}
-                />
-                <ToolbarButton
-                  active={resolvedToolbarState.isUnderline}
-                  label="Underline"
-                  onClick={handleToggleUnderline}
-                />
-                <ToolbarButton
-                  active={resolvedToolbarState.isStrike}
-                  label="Strike"
-                  onClick={handleToggleStrike}
-                />
-                <ToolbarButton
-                  active={resolvedToolbarState.isHeading1}
-                  label="H1"
-                  onClick={handleToggleHeading1}
-                />
-                <ToolbarButton
-                  active={resolvedToolbarState.isHeading2}
-                  label="H2"
-                  onClick={handleToggleHeading2}
-                />
-                <ToolbarButton
-                  active={resolvedToolbarState.isBulletList}
-                  label="Bullets"
-                  onClick={handleToggleBulletList}
-                />
-                <ToolbarButton
-                  active={resolvedToolbarState.isOrderedList}
-                  label="Numbers"
-                  onClick={handleToggleOrderedList}
-                />
-                <ToolbarButton
-                  active={resolvedToolbarState.isBlockquote}
-                  label="Quote"
-                  onClick={handleToggleBlockquote}
-                />
-                <ToolbarButton
-                  active={resolvedToolbarState.isCodeBlock}
-                  label="Code"
-                  onClick={handleToggleCodeBlock}
-                />
-                <ToolbarButton
-                  active={resolvedToolbarState.isLink}
-                  disabled={!resolvedToolbarState.canUseLink}
-                  label={resolvedToolbarState.isLink ? "Unlink" : "Link"}
-                  onClick={handleLinkAction}
-                />
-              </div>
-              <div className="mt-4 min-h-[30rem] rounded-card border border-line bg-(--background)">
-                {editor ? (
-                  <EditorContent editor={editor} />
-                ) : (
-                  <div className="flex min-h-[30rem] items-center justify-center px-6 text-sm text-muted">
-                    Preparing the editor...
-                  </div>
-                )}
-              </div>
-              {editorMessage ? (
-                <p aria-live="polite" className={`${bodyErrorTextClassName} mt-4`}>
-                  {editorMessage}
-                </p>
-              ) : null}
+            <div className="mt-4 min-h-[30rem] rounded-card border border-line bg-(--background)">
+              {editor ? (
+                <EditorContent editor={editor} />
+              ) : (
+                <div className="flex min-h-[30rem] items-center justify-center px-6 text-sm text-muted">
+                  Preparing the editor...
+                </div>
+              )}
             </div>
-            {props.mode === "new" ? (
-              <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-line bg-white/70 px-5 py-4">
-                <button
-                  className={`${secondaryPillButtonClassName} disabled:cursor-not-allowed disabled:opacity-55`}
-                  onClick={handleClearDraft}
-                  type="button"
-                >
-                  Clear
-                </button>
-                <button
-                  className={`${primaryPillButtonClassName} disabled:cursor-not-allowed disabled:opacity-55`}
-                  disabled={!canCreate || isCreating}
-                  onClick={handleCreateNote}
-                  type="button"
-                >
-                  {isCreating ? "Creating note..." : "Create note"}
-                </button>
-              </div>
-            ) : (
-              <div className="rounded-card border border-line bg-white/70 px-5 py-4 text-sm leading-7 text-muted">
-                Autosave runs after short pauses. Keep typing if the status shows unsaved changes.
-              </div>
-            )}
-            {createErrorMessage ? (
-              <p aria-live="polite" className={bodyErrorTextClassName}>
-                {createErrorMessage}
+            {editorMessage ? (
+              <p aria-live="polite" className={`${bodyErrorTextClassName} mt-4`}>
+                {editorMessage}
               </p>
             ) : null}
           </div>
-          <div className="space-y-5">
-            <div className={subtleCardClassName}>
-              <p className={eyebrowClassName}>Save state</p>
-              <div className="mt-3 flex flex-wrap items-center gap-3">
-                <StatusBadge tone={saveState.tone}>{saveState.label}</StatusBadge>
-                {props.mode === "new" ? <StatusBadge tone="muted">Draft</StatusBadge> : null}
-              </div>
-              <p className="mt-3 text-sm leading-7 text-muted">{saveState.description}</p>
-              {saveErrorMessage ? (
-                <p aria-live="polite" className={`${bodyErrorTextClassName} mt-3`}>
-                  {saveErrorMessage}
-                </p>
-              ) : null}
+          {props.mode === "new" ? (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-line bg-white/70 px-5 py-4">
+              <button
+                className={`${secondaryPillButtonClassName} disabled:cursor-not-allowed disabled:opacity-55`}
+                onClick={handleClearDraft}
+                type="button"
+              >
+                Clear
+              </button>
+              <button
+                className={`${primaryPillButtonClassName} disabled:cursor-not-allowed disabled:opacity-55`}
+                disabled={!canCreate || isCreating}
+                onClick={handleCreateNote}
+                type="button"
+              >
+                {isCreating ? "Creating note..." : "Create note"}
+              </button>
             </div>
-            <div className={subtleCardClassName}>
-              <p className={eyebrowClassName}>Note metadata</p>
-              <dl className="mt-4 space-y-4 text-sm text-muted">
-                <MetadataRow
-                  label="created_at"
-                  value={
-                    props.mode === "existing"
-                      ? formatNoteDate(props.note.createdAt)
-                      : "Assigned after creation"
-                  }
-                />
-                <MetadataRow
-                  label="updated_at"
-                  value={updatedAt ? formatNoteDate(updatedAt) : "Autosave starts after creation"}
-                />
-                <MetadataRow label="visibility" value={getVisibilityLabel(props)} />
-                <MetadataRow label="mode" value={props.mode} />
-              </dl>
+          ) : (
+            <div className="rounded-card border border-line bg-white/70 px-5 py-4 text-sm leading-7 text-muted">
+              Autosave runs after short pauses. Keep typing if the status shows unsaved changes.
             </div>
-            <div className={subtleCardClassName}>
-              <p className={eyebrowClassName}>Scope guardrails</p>
-              <div className="mt-3 space-y-3 text-sm leading-7 text-muted">
-                <p>This pass covers authenticated list, create, and edit flows only.</p>
-                <p>Deletion remains intentionally out of scope.</p>
-                <p>
-                  Sharing stays untouched here, though current visibility is still reflected from
-                  the database.
-                </p>
-              </div>
+          )}
+          {createErrorMessage ? (
+            <p aria-live="polite" className={bodyErrorTextClassName}>
+              {createErrorMessage}
+            </p>
+          ) : null}
+        </div>
+        <div className="grid gap-5 md:grid-cols-2 2xl:grid-cols-1">
+          <div className={subtleCardClassName}>
+            <p className={eyebrowClassName}>Save state</p>
+            <div className="mt-3 flex flex-wrap items-center gap-3">
+              <StatusBadge tone={saveState.tone}>{saveState.label}</StatusBadge>
+              {props.mode === "new" ? <StatusBadge tone="muted">Draft</StatusBadge> : null}
             </div>
-            <div className={subtleCardClassName}>
-              <p className={eyebrowClassName}>Navigation</p>
-              <div className="mt-3 flex flex-wrap gap-3">
-                <Link className={secondaryPillButtonClassName} href="/notes">
-                  Back to notes
+            <p className="mt-3 text-sm leading-7 text-muted">{saveState.description}</p>
+            {saveErrorMessage ? (
+              <p aria-live="polite" className={`${bodyErrorTextClassName} mt-3`}>
+                {saveErrorMessage}
+              </p>
+            ) : null}
+          </div>
+          <div className={subtleCardClassName}>
+            <p className={eyebrowClassName}>Note metadata</p>
+            <dl className="mt-4 space-y-4 text-sm text-muted">
+              <MetadataRow
+                label="created_at"
+                value={
+                  props.mode === "existing"
+                    ? formatNoteDate(props.note.createdAt)
+                    : "Assigned after creation"
+                }
+              />
+              <MetadataRow
+                label="updated_at"
+                value={updatedAt ? formatNoteDate(updatedAt) : "Autosave starts after creation"}
+              />
+              <MetadataRow label="visibility" value={getVisibilityLabel(props)} />
+              <MetadataRow label="mode" value={props.mode} />
+            </dl>
+          </div>
+          <div className={subtleCardClassName}>
+            <p className={eyebrowClassName}>Scope guardrails</p>
+            <div className="mt-3 space-y-3 text-sm leading-7 text-muted">
+              <p>This pass covers authenticated list, create, and edit flows only.</p>
+              <p>Deletion remains intentionally out of scope.</p>
+              <p>
+                Sharing stays untouched here, though current visibility is still reflected from the
+                database.
+              </p>
+            </div>
+          </div>
+          <div className={subtleCardClassName}>
+            <p className={eyebrowClassName}>Navigation</p>
+            <div className="mt-3 flex flex-wrap gap-3">
+              <Link className={secondaryPillButtonClassName} href="/notes">
+                Back to notes
+              </Link>
+              {props.mode === "existing" ? (
+                <Link className={secondaryPillButtonClassName} href="/notes/new">
+                  New note
                 </Link>
-                {props.mode === "existing" ? (
-                  <Link className={secondaryPillButtonClassName} href="/notes/new">
-                    New note
-                  </Link>
-                ) : null}
-              </div>
+              ) : null}
             </div>
           </div>
         </div>
-      </Panel>
-    </div>
+      </div>
+    </Panel>
   );
 }
 

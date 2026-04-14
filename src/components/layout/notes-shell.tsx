@@ -22,7 +22,7 @@ export function NotesShell({
 }>) {
   return (
     <main className="px-6 py-8 text-foreground">
-      <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
+      <div className="mx-auto grid max-w-[1600px] gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">
         <Panel className="flex h-full flex-col gap-8 p-6">
           <div className="space-y-4">
             <StatusBadge>Authenticated</StatusBadge>

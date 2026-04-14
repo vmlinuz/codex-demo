@@ -147,8 +147,40 @@ code {
   padding-left: 1.5rem;
 }
 
+.note-editor-surface ul {
+  list-style-type: disc;
+}
+
+.note-editor-surface ol {
+  list-style-type: decimal;
+}
+
+.note-editor-surface ul ul {
+  list-style-type: circle;
+}
+
+.note-editor-surface ul ul ul {
+  list-style-type: square;
+}
+
+.note-editor-surface ol ol {
+  list-style-type: lower-alpha;
+}
+
+.note-editor-surface ol ol ol {
+  list-style-type: lower-roman;
+}
+
+.note-editor-surface li > p {
+  margin: 0;
+}
+
 .note-editor-surface li + li {
   margin-top: 0.35rem;
+}
+
+.note-editor-surface li::marker {
+  color: var(--muted);
 }
 
 .note-editor-surface blockquote {
