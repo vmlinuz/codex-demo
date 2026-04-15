@@ -24,9 +24,16 @@ Keep route-level concerns in `app/` and reusable presentation components in `src
 
 Use Bun (lockfile is `bun.lock`), but npm equivalents also work.
 
-- `bun run dev`: Start local dev server at `http://localhost:3000`.
+- `bun run dev`: Start local dev server at `http://localhost:3000` using Next.js webpack mode.
 - `bun run build`: Create a production build.
 - `bun run start`: Run the production server.
+- `bun run migrate`: Apply pending SQLite migrations from `migrations/` to the configured database.
+- `bun run migrate -- --down` / `bun run migrate -- --down=N`: Roll back the latest migration or the latest `N` migrations.
+- `bun run test`: Run the unit test suite (alias for `bun run test:unit`).
+- `bun run test:unit`: Run the Vitest unit suite.
+- `bun run test:e2e`: Build the app and run the Playwright end-to-end suite across Chromium, Firefox, and WebKit.
+- `bun run test:e2e:playwright -- --project=<browser>`: Run Playwright directly for targeted local debugging.
+- `bun run test:all`: Run unit and e2e suites in sequence.
 - `bun run lint`: Run `oxlint` for static checks.
 - `bun run format`: Run `oxfmt` to format code.
 
