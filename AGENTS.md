@@ -31,11 +31,15 @@ Use Bun (lockfile is `bun.lock`), but npm equivalents also work.
 - `bun run migrate -- --down` / `bun run migrate -- --down=N`: Roll back the latest migration or the latest `N` migrations.
 - `bun run test`: Run the unit test suite (alias for `bun run test:unit`).
 - `bun run test:unit`: Run the Vitest unit suite.
+- `bun run test:unit:watch`: Run Vitest in watch mode for local iteration.
 - `bun run test:e2e`: Build the app and run the Playwright end-to-end suite across Chromium, Firefox, and WebKit.
-- `bun run test:e2e:playwright -- --project=<browser>`: Run Playwright directly for targeted local debugging.
+- `bun run test:e2e:playwright -- --project=<browser>`: Run Playwright directly for targeted local debugging against a single browser project.
 - `bun run test:all`: Run unit and e2e suites in sequence.
 - `bun run lint`: Run `oxlint` for static checks.
 - `bun run format`: Run `oxfmt` to format code.
+
+The default SQLite database path is `./data/tinynotes.db` unless `DB_PATH` is set.
+The e2e harness uses an isolated SQLite database at `data/test/e2e.sqlite` and starts the app on `http://127.0.0.1:3100`.
 
 Run `bun run lint && bun run build` before opening a PR.
 
